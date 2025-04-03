@@ -50,4 +50,5 @@ mod tests {
     }
 
     println!("hello");
+    println!("hello");
 }
