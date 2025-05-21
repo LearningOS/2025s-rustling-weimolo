@@ -9,29 +9,7 @@
 // Execute `rustlings hint from_str` or use the `hint` watch subcommand for a
 // hint.
 
-use std::num::ParseIntError;
-use std::str::FromStr;
-
-#[derive(Debug, PartialEq)]
-struct Person {
-    name: String,
-    age: usize,
-}
-
-// We will use this error type for the `FromStr` implementation.
-#[derive(Debug, PartialEq)]
-enum ParsePersonError {
-    // Empty input string
-    Empty,
-    // Incorrect number of fields
-    BadLen,
-    // Empty name field
-    NoName,
-    // Wrapped error from parse::<usize>()
-    ParseInt(ParseIntError),
-}
-
-// I AM NOT DONE
+// AI
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -49,9 +27,57 @@ enum ParsePersonError {
 // you want to return a string error message, you can do so via just using
 // return `Err("my error message".into())`.
 
+use std::num::ParseIntError;
+use std::str::FromStr;
+
+#[derive(Debug, PartialEq)]
+struct Person {
+    name: String,
+    age: usize,
+}
+
+// The error type for parsing a `Person` from a string
+#[derive(Debug, PartialEq)]
+enum ParsePersonError {
+    // Empty input string
+    Empty,
+    // Incorrect number of fields
+    BadLen,
+    // Empty name field
+    NoName,
+    // Wrapped error from parse::<usize>()
+    ParseInt(ParseIntError),
+}
+
 impl FromStr for Person {
     type Err = ParsePersonError;
+
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        // Case 1: Empty input string
+        if s.is_empty() {
+            return Err(ParsePersonError::Empty);
+        }
+
+        // Split the string by a comma
+        let parts: Vec<&str> = s.split(',').collect();
+
+        // Case 2: Incorrect number of fields
+        if parts.len() != 2 {
+            return Err(ParsePersonError::BadLen);
+        }
+
+        let name = parts[0].to_string();
+
+        // Case 3: Empty name
+        if name.is_empty() {
+            return Err(ParsePersonError::NoName);
+        }
+
+        // Case 4: Parse age, if it fails, return ParseInt error
+        match parts[1].parse::<usize>() {
+            Ok(age) => Ok(Person { name, age }),
+            Err(e) => Err(ParsePersonError::ParseInt(e)),
+        }
     }
 }
 
@@ -68,6 +94,7 @@ mod tests {
     fn empty_input() {
         assert_eq!("".parse::<Person>(), Err(ParsePersonError::Empty));
     }
+
     #[test]
     fn good_input() {
         let p = "John,32".parse::<Person>();
@@ -76,6 +103,7 @@ mod tests {
         assert_eq!(p.name, "John");
         assert_eq!(p.age, 32);
     }
+
     #[test]
     fn missing_age() {
         assert!(matches!(

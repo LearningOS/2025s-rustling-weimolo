@@ -3,14 +3,14 @@
 // Execute `rustlings hint macros1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+// AI
 
 macro_rules! my_macro {
-    () => {
-        println!("Check out my macro!");
+    ($msg:expr) => {
+        println!("Check out my macro! Message: {}", $msg);
     };
 }
 
 fn main() {
-    my_macro();
+    my_macro!("Hello, Rust!");
 }

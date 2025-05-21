@@ -3,27 +3,40 @@
 	This problem requires you to implement a basic DFS traversal
 */
 
-// I AM NOT DONE
-use std::collections::HashSet;
+// AI
+use std::collections::{HashSet, VecDeque};
 
 struct Graph {
     adj: Vec<Vec<usize>>, 
 }
 
 impl Graph {
+    // Create a new graph with n vertices
     fn new(n: usize) -> Self {
         Graph {
             adj: vec![vec![]; n],
         }
     }
 
+    // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
         self.adj[src].push(dest);
         self.adj[dest].push(src); 
     }
 
+    // Utility function for DFS to visit nodes recursively
     fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
-        //TODO
+        // Mark the current node as visited
+        visited.insert(v);
+        // Add the node to the visit order
+        visit_order.push(v);
+
+        // Visit all the unvisited neighbors
+        for &neighbor in &self.adj[v] {
+            if !visited.contains(&neighbor) {
+                self.dfs_util(neighbor, visited, visit_order);
+            }
+        }
     }
 
     // Perform a depth-first search on the graph, return the order of visited nodes
@@ -56,7 +69,7 @@ mod tests {
         graph.add_edge(0, 2);
         graph.add_edge(1, 2);
         graph.add_edge(2, 3);
-        graph.add_edge(3, 3); 
+        graph.add_edge(3, 3); // A cycle at node 3
 
         let visit_order = graph.dfs(0);
         assert_eq!(visit_order, vec![0, 1, 2, 3]);
@@ -67,12 +80,11 @@ mod tests {
         let mut graph = Graph::new(5);
         graph.add_edge(0, 1);
         graph.add_edge(0, 2);
-        graph.add_edge(3, 4); 
+        graph.add_edge(3, 4); // Disconnected component
 
         let visit_order = graph.dfs(0);
-        assert_eq!(visit_order, vec![0, 1, 2]); 
+        assert_eq!(visit_order, vec![0, 1, 2]); // Only reachable nodes from 0
         let visit_order_disconnected = graph.dfs(3);
-        assert_eq!(visit_order_disconnected, vec![3, 4]); 
+        assert_eq!(visit_order_disconnected, vec![3, 4]); // Only reachable nodes from 3
     }
 }
-

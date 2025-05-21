@@ -3,11 +3,24 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
+// AI
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T>(array: &mut [T])
+where
+    T: Ord, // T must implement the Ord trait to allow comparison
+{
+    let n = array.len();
+    
+    for i in 0..n {
+        for j in 0..(n - 1 - i) {
+            // Compare adjacent elements and swap if out of order
+            if array[j] > array[j + 1] {
+                array.swap(j, j + 1);
+            }
+        }
+    }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
